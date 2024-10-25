@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# **#Contact Management API (Express.js & Next.js with PostgreSQL)**
+
+This project provides a full-featured contact management system with user authentication, file upload, and download capabilities. It includes JWT-based authentication, contact management, batch processing, timezone handling, and robust data validation. integreted with express js
+
+## Features
+
+**1. User Authentication:**
+1.Registration, login, and email verification using JWT.
+2.Password reset via one-time-code.
+
+**2.Contact Management:**
+1.CRUD operations for contacts with filtering, sorting, and batch processing.
+2.Soft delete functionality for contacts.
+
+**3.File Upload:**
+1.CSV/Excel file upload for bulk contact creation and updates.
+
+**Data Validation:**
+1.Strong validation of inputs using Joi (or Yup).
+
+**Security:**
+1.Password hashing, rate limiting, and secure data handling.
+
+**File Download:** 1. Generate downloadable CSV/Excel files for all contacts.
+
+## Tech Stack
+
+    Frontend Framework: Next.js
+    Backend Framework: Express.js
+    Database: PostgreSQL
+    Validation: Joi
+    Authentication: JWT
+    Deployment: Heroku/Vercel/Render
+
+## Prerequisites
+
+    Make sure you have the following installed on your system:
+
+    Node.js (>= 14.x.x)
+    PostgreSQL (>= 12.x.x)
 
 ## Getting Started
 
-First, run the development server:
+**1. Clone the repository:**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    git clone https://github.com/Srikanth-Sankarasetti/admitSpotAssignment.git
+    cd contact-management-api
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+##
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 2. Install dependencies:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+npm install
 
-## Learn More
+## 3. Set up environment variables:
 
-To learn more about Next.js, take a look at the following resources:
+    Create a .env file in the root of your project:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# .env
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    PORT=...
+    DB_PORT=...
+    DB_HOST=...
+    DB_USER=postgres.
+    DB_PASSWORD=...
+    DB_NAME=...
 
-## Deploy on Vercel
+    MAIL_HOST=...
+    MAIL_PORT=...
+    MAIL_USERNAME=...
+    MAIL_PASSWORD=...
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Using Migrations:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+    Make sure your PostgreSQL server is running, then run migrations to create the necessary tables:
+
+    npx sequelize-cli db:migrate 5. Run the backend server:
+
+    npm run dev
+    The server should now be running at http://localhost:3000.
+
+## Database Schema
+
+    Below is the ER Diagram representing the relationships:
+
+    ER Diagram:
+
+    (User) ---- (1:N) ---- (Contact)
+
+## Users Table:
+
+    id (Primary Key)
+    email (Unique)
+    password
+    emailVerified (boolean)
+    createdAt, updatedAt
+    verification_code
+    reset_code
+    verification_code_validity
+
+## Contacts Table:
+
+    id (Primary Key)
+    userId (Foreign Key)
+    name, email, phoneNumber, address, timezone
+    softDeleted (boolean)
+    createdAt, updatedAt
+
+## API Documentation
+
+    The API documentation is available via Swagger. To access the documentation:
+
+    Visit: http://localhost:3000//admitspot/assignment
+    ## Endpoints:
+
+## Authentication:
+
+        POST /register: User registration with email verification.
+        POST /register/:id: Email Verification
+        POST /login: User login using JWT.
+        POST /forgetPassword : forgot password
+        POST /forgetPassword/:id: Request a password reset via one-time code.
+
+## Contact Management:
+
+    router
+    .route("/")
+    .get(routeProtector, getAllContacts) : get contacts
+    .post(routeProtector, createContactValidation, createContact); : Create contacts
+
+    router
+    .route("/:id")
+    .delete(routeProtector, deleteContactById) :delete contacts
+    .patch(routeProtector, updateContact); :Update contact by id
+
+    router.route("/batchUpdating").post(routeProtector, batchProcessContacts); Batch Updating
+    router
+    .route("/upload/excel")
+    .post(routeProtector, upload.single("file"), uploadExcelContacts); :Uploading file
+
+    router.route("/download/excel").get(routeProtector, downloadContactsExcel); :downloading file
