@@ -5,6 +5,8 @@ const catchAsync = require("./../mildlewares/catchAsync");
 const sendMail = require("./../mildlewares/sendmail");
 const AppError = require("./../mildlewares/appError");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config({ path: "./.env.local" });
 
 exports.routeProtector = catchAsync(async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -106,7 +108,7 @@ exports.userLogin = catchAsync(async (req, res, next) => {
     id: userVerification.rows[0].id,
     email: userVerification.rows[0].email,
   };
-  const token = jwt.sign(payload, "srikanth");
+  const token = jwt.sign(payload, process.env.JWT_SECRET);
   res.status(200).json({
     status: "success",
     token,
