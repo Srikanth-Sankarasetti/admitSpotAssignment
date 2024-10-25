@@ -7,6 +7,7 @@ const globalError = require("./mildlewares/globalError");
 const AppError = require("./mildlewares/appError");
 const userRoute = require("./routes/userRoute");
 const contactRoute = require("./routes/contactsRoute");
+const rateLimit = require("express-rate-limit");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 
@@ -30,7 +31,13 @@ app.prepare().then(() => {
 
   // Middleware for JSON parsing, security, etc.
   server.use(express.json());
+  const limiter = rateLimit({
+    windowms: 60 * 60 * 1000,
+    max: 100,
+    message: "to many request from this IP , please try after some time",
+  });
 
+  server.use("/admitspot", limiter);
   // Define your custom API routes, e.g.:
 
   server.use("/admitspot/assignment", userRoute);
